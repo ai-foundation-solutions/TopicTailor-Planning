@@ -1,0 +1,67 @@
+graph TD
+
+    subgraph "⏰ 1. Scheduler: The Starting Gun"
+        A["<b>Start: Pipeline Trigger</b><br/><i>Purpose:</i> Initiate the workflow automatically.<br/><i>Action:</i> Runs the main Python script on a set schedule.<br/><i>Tech:</i> Cron Job (Linux), APScheduler (Python)"]
+    end
+
+    subgraph "👤 2. User & Data Management: The System's Memory"
+        B1["<b>User Interface (Intelligent Profile Builder)</b><br/><i>Purpose:</i> Create a dynamic, evolving user profile for highly granular & adaptive personalization.<br/><i>Action:</i> **Interactive AI-driven onboarding** for: Direct Preferences (Intelligent Topic Discovery), Expertise Level (Beginner/Intermediate/Advanced), **Content Type Preference (e.g., Research, Tutorials, Industry News)**, **Desired Summary Format/Depth (e.g., bulleted, detailed, layman's terms)**, **Delivery Frequency & Time**, and **Source Prioritization/Exclusion**.<br/><i>Tech:</i> Streamlit, LLM for conversational parsing & topic/preference suggestion."]
+
+        B2["<b>Central Database</b><br/><i>Purpose:</i> Store all persistent data.<br/><i>Action:</i> Holds user profiles, keywords, <b>User Personas/Expertise Level</b>, and historical article URLs.<br/><i>Tech:</i> SQLite / Postgres"]
+        
+        B1 -- "Writes User Profile & Persona to DB" --> B2
+    end
+
+    subgraph "📥 3. Content Aggregation: Gathering Raw Materials"
+        A --> C1["<b>Fetch from RSS Feeds</b><br/><i>Purpose:</i> Efficiently get the latest headlines from reliable sources.<br/><i>Action:</i> Polls a predefined list of RSS feed URLs.<br/><i>Tech:</i> feedparser"]
+        
+        C1 --> C2["<b>Scrape Web Pages</b><br/><i>Purpose:</i> Extract full article text from URLs.<br/><i>Action:</i> Visits each link, parses the HTML, and extracts the main body content.<br/><i>Tech:</i> requests, BeautifulSoup"]
+        
+        C2 -- "Combined List of All Found Articles" --> C3
+        
+        C3["<b>Filter Out Duplicates</b><br/><i>Purpose:</i> Ensure no article is ever sent twice.<br/><i>Action:</i> Compares the URL of each new article against the historical list of sent URLs from the database.<br/><i>Tech:</i> Python sets for efficient comparison"]
+        
+        B2 -- "Provides History of Sent URLs" --> C3
+        
+        C3 -- "List of 100% New Articles" --> C4
+        
+        C4["<b>Curate by User Preference</b><br/><i>Purpose:</i> Personalize the content for each subscriber.<br/><i>Action:</i> Filters the list of new articles, keeping only those that match the current user's specified keywords.<br/><i>Tech:</i> Keyword matching logic"]
+        
+        B2 -- "Provides a Specific User's Keywords" --> C4
+    end
+
+    subgraph "🧠 4. AI/NLP Processing: Creating Value"
+        C4 -- "List of New, Relevant Articles" --> D1
+        
+        D1["<b>Generate Persona-Adjusted AI Summaries</b><br/><i>Purpose:</i> Distill articles into digests tailored to the user's knowledge level.<br/><i>Action:</i> Sends article text to an LLM with a <b>dynamically chosen prompt</b> based on the user's 'Beginner', 'Intermediate', or 'Advanced' persona.<br/><i>Tech:</i> Custom Prompt Engineering via OpenAI/Hugging Face API"]
+        
+        B2 -- "Provides User Persona for Prompt Selection" --> D1
+        
+        D1 --> D2["<b>Analyze & Categorize</b><br/><i>Purpose:</i> Add useful metadata for sorting and display.<br/><i>Action:</i> A second LLM prompt extracts key topics or assigns predefined categories.<br/><i>Tech:</i> LLM-based keyword extraction"]
+        
+        D2 --> D3["<b>Enrich with Context (Optional)</b><br/><i>Purpose:</i> Add value by explaining complex terms, especially for beginners.<br/><i>Action:</i> Identifies key terms and fetches a simple definition.<br/><i>Tech:</i> Wikipedia API"]
+    end
+
+    subgraph "📝 5. Email Composition: Assembling the Final Product"
+        D3 -- "All Processed Content (Summaries, Titles, Links, etc.)" --> E1
+        E1["<b>Assemble Newsletter Body</b><br/><i>Purpose:</i> Build the final email content.<br/><i>Action:</i> Formats the titles, summaries, and links into a clean, readable layout.<br/><i>Tech:</i> Markdown templates, converted to HTML"]
+        
+        E1 --> E2["<b>Create Compelling Subject Line</b><br/><i>Purpose:</i> Maximize email open rates.<br/><i>Action:</i> Uses an LLM to generate a catchy and relevant subject line based on the most important articles.<br/><i>Tech:</i> LLM Prompt"]
+    end
+
+    subgraph "📤 6. Email Delivery: Sending to Subscribers"
+        E2 -- "Final HTML Body & Subject Line" --> F1
+        F1["<b>Deliver Email to Subscriber</b><br/><i>Purpose:</i> Send the newsletter to the mailing list.<br/><i>Action:</i> Makes an API call to a transactional email service.<br/><i>Tech:</i> SendGrid, AWS SES, Mailjet API"]
+        
+        F1 -- "URLs of Successfully Sent Articles" --> F2
+        F2["<b>Update History / Log Results</b><br/><i>Purpose:</i> Close the loop for deduplication.<br/><i>Action:</i> Writes the URLs of the just-sent articles back to the database's historical log.<br/><i>Tech:</i> Database INSERT command"]
+    end
+
+    subgraph "⚡ 7. Major Breakthrough Alerts (Conditional Path)"
+        D1 -- "If Summary contains 'breakthrough', etc." --> G1
+        G1["<b>Alert Trigger: Detect Breakthrough</b><br/><i>Purpose:</i> Identify and flag high-impact news.<br/><i>Action:</i> Scans summaries for a predefined list of trigger words."]
+        
+        G1 --> G2["<b>Send Immediate Alert</b><br/><i>Purpose:</i> Notify users of major news without delay.<br/><i>Action:</i> Initiates a separate, expedited email composition and delivery process."]
+    end
+
+    F2 --> H["<b>✅ End: Cycle Complete</b>"]
