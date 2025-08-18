@@ -5,11 +5,23 @@ graph TD
     end
 
     subgraph "👤 2. User & Data Management: The System's Memory"
-        B1["<b>User Interface (Intelligent Profile Builder)</b><br/><i>Purpose:</i> Create a dynamic, evolving user profile for highly granular & adaptive personalization.<br/><i>Action:</i> **Interactive AI-driven onboarding** for: Direct Preferences (Intelligent Topic Discovery), Expertise Level (Beginner/Intermediate/Advanced), **Content Type Preference (e.g., Research, Tutorials, Industry News)**, **Desired Summary Format/Depth (e.g., bulleted, detailed, layman's terms)**, **Delivery Frequency & Time**, and **Source Prioritization/Exclusion**.<br/><i>Tech:</i> Streamlit, LLM for conversational parsing & topic/preference suggestion."]
-
-        B2["<b>Central Database</b><br/><i>Purpose:</i> Store all persistent data.<br/><i>Action:</i> Holds user profiles, keywords, <b>User Personas/Expertise Level</b>, and historical article URLs.<br/><i>Tech:</i> SQLite / Postgres"]
+        B1["<b>Step 1: Core Topic Selection</b><br/><i>Purpose:</i> Define foundational AI topics as primary content filters.<br/><i>Action:</i> Users select from: Generative AI, Machine Learning, Computer Vision, NLP, AI Ethics, Robotics, AI in Healthcare/Finance, Autonomous Systems, Edge AI, Quantum AI, etc.<br/><i>Tech:</i> Interactive multi-select interface with AI-powered topic suggestions."]
         
-        B1 -- "Writes User Profile & Persona to DB" --> B2
+        B2["<b>Step 2: Content Type Preferences</b><br/><i>Purpose:</i> Specify preferred content formats within chosen topics.<br/><i>Action:</i> Users choose from: Industry News, Investments & Market Trends, Conferences & Events, Research & Breakthroughs, Product Releases & Benchmarks, Case Studies & Comparisons.<br/><i>Tech:</i> Preference matrix with topic-content type combinations."]
+        
+        B3["<b>Step 3: Topic Expertise & Technicality</b><br/><i>Purpose:</i> Set knowledge level per topic for tailored content depth.<br/><i>Action:</i> Global default (Beginner/Intermediate/Advanced) with topic-specific overrides. Optional aids: jargon translation, code snippets, math notations, citations, glossaries. Self-assessment sliders for math/code/research comfort.<br/><i>Tech:</i> Dynamic expertise mapping with persona-based prompt selection."]
+        
+        B4["<b>Step 4: Delivery Scheduling</b><br/><i>Purpose:</i> Customize timing and frequency of content delivery.<br/><i>Action:</i> Specific day/time delivery, daily digest options, urgent breakthrough alerts, timezone preferences.<br/><i>Tech:</i> Flexible scheduling engine with alert prioritization."]
+        
+        B5["<b>Step 5: Privacy & Data Controls</b><br/><i>Purpose:</i> Manage personalization data and privacy preferences.<br/><i>Action:</i> Opt-in/out controls, profile review/edit, data deletion requests, transparency dashboard.<br/><i>Tech:</i> GDPR-compliant privacy management system."]
+
+        B6["<b>Central Database</b><br/><i>Purpose:</i> Store all persistent user data and preferences.<br/><i>Action:</i> Holds detailed user profiles with topic selections, content preferences, expertise levels per topic, delivery schedules, privacy settings, and historical article URLs.<br/><i>Tech:</i> SQLite / Postgres with structured user preference schema"]
+        
+        B1 --> B2
+        B2 --> B3
+        B3 --> B4
+        B4 --> B5
+        B5 -- "Writes Complete User Profile to DB" --> B6
     end
 
     subgraph "📥 3. Content Aggregation: Gathering Raw Materials"
@@ -21,21 +33,21 @@ graph TD
         
         C3["<b>Filter Out Duplicates</b><br/><i>Purpose:</i> Ensure no article is ever sent twice.<br/><i>Action:</i> Compares the URL of each new article against the historical list of sent URLs from the database.<br/><i>Tech:</i> Python sets for efficient comparison"]
         
-        B2 -- "Provides History of Sent URLs" --> C3
+        B6 -- "Provides History of Sent URLs" --> C3
         
         C3 -- "List of 100% New Articles" --> C4
         
-        C4["<b>Curate by User Preference</b><br/><i>Purpose:</i> Personalize the content for each subscriber.<br/><i>Action:</i> Filters the list of new articles, keeping only those that match the current user's specified keywords.<br/><i>Tech:</i> Keyword matching logic"]
+        C4["<b>Curate by User Preference</b><br/><i>Purpose:</i> Personalize the content for each subscriber.<br/><i>Action:</i> Filters articles based on user's core topics, content type preferences, and expertise-level requirements.<br/><i>Tech:</i> Multi-dimensional preference matching with topic-content type matrix"]
         
-        B2 -- "Provides a Specific User's Keywords" --> C4
+        B6 -- "Provides User's Complete Preference Profile" --> C4
     end
 
     subgraph "🧠 4. AI/NLP Processing: Creating Value"
         C4 -- "List of New, Relevant Articles" --> D1
         
-        D1["<b>Generate Persona-Adjusted AI Summaries</b><br/><i>Purpose:</i> Distill articles into digests tailored to the user's knowledge level.<br/><i>Action:</i> Sends article text to an LLM with a <b>dynamically chosen prompt</b> based on the user's 'Beginner', 'Intermediate', or 'Advanced' persona.<br/><i>Tech:</i> Custom Prompt Engineering via OpenAI/Hugging Face API"]
+        D1["<b>Generate Persona-Adjusted AI Summaries</b><br/><i>Purpose:</i> Distill articles into digests tailored to the user's topic-specific knowledge level.<br/><i>Action:</i> Sends article text to an LLM with <b>dynamically chosen prompts</b> based on the user's per-topic expertise level (Beginner/Intermediate/Advanced) and preferred stylistic aids (jargon translation, code snippets, math notations, etc.).<br/><i>Tech:</i> Custom Prompt Engineering via OpenAI/Hugging Face API with persona-specific templates"]
         
-        B2 -- "Provides User Persona for Prompt Selection" --> D1
+        B6 -- "Provides Topic-Specific Expertise Levels & Style Preferences" --> D1
         
         D1 --> D2["<b>Analyze & Categorize</b><br/><i>Purpose:</i> Add useful metadata for sorting and display.<br/><i>Action:</i> A second LLM prompt extracts key topics or assigns predefined categories.<br/><i>Tech:</i> LLM-based keyword extraction"]
         
@@ -51,10 +63,12 @@ graph TD
 
     subgraph "📤 6. Email Delivery: Sending to Subscribers"
         E2 -- "Final HTML Body & Subject Line" --> F1
-        F1["<b>Deliver Email to Subscriber</b><br/><i>Purpose:</i> Send the newsletter to the mailing list.<br/><i>Action:</i> Makes an API call to a transactional email service.<br/><i>Tech:</i> SendGrid, AWS SES, Mailjet API"]
+        F1["<b>Deliver Email to Subscriber</b><br/><i>Purpose:</i> Send personalized newsletter based on user's delivery schedule.<br/><i>Action:</i> Makes API call to transactional email service, respecting user's preferred delivery time and frequency settings.<br/><i>Tech:</i> SendGrid, AWS SES, Mailjet API with scheduled delivery"]
         
         F1 -- "URLs of Successfully Sent Articles" --> F2
-        F2["<b>Update History / Log Results</b><br/><i>Purpose:</i> Close the loop for deduplication.<br/><i>Action:</i> Writes the URLs of the just-sent articles back to the database's historical log.<br/><i>Tech:</i> Database INSERT command"]
+        F2["<b>Update History / Log Results</b><br/><i>Purpose:</i> Close the loop for deduplication and user engagement tracking.<br/><i>Action:</i> Writes the URLs of sent articles back to the database's historical log and updates delivery statistics.<br/><i>Tech:</i> Database INSERT command with user engagement metrics"]
+        
+        F2 --> B6
     end
 
     subgraph "⚡ 7. Major Breakthrough Alerts (Conditional Path)"
