@@ -29,27 +29,27 @@ Users can define their ideal AI news experience with granular control over the f
 - For each selected topic, users indicate their familiarity level:
     - *Beginner:* Prefers high-level explanations, minimal jargon.
     - *Intermediate:* Comfortable with common terms, concise technical detail.
-    - *Advanced/Expert:* Familiar with research papers, math, implementation details; prefers technical language.
+    - *Advanced/Expert:* Familiar with research papers, ~~math~~, implementation details; prefers technical language.
 - Users can set a global default and override specific topics (e.g., "Global: Intermediate, but 'Generative AI': Advanced").
-- Optional stylistic aids per topic:
+- ~~Optional~~ stylistic aids per topic:
     - Translate jargon to lay terms
-    - Include code snippets (Python/PyTorch) when relevant
-    - Add math notations and key equations
-    - Provide citations/links to papers and benchmarks
-    - Add glossaries or "Why it matters" callouts
-- Quick self-assessment sliders (1–5) for comfort with math, code, and research papers to fine-tune output.
+    - ~~Include code snippets (Python/PyTorch) when relevant~~
+    - ~~Add math notations and key equations~~
+    - Provide citations/links to papers and benchmarks (must)
+    - Add glossaries or "Why it matters" callouts (not so important, but can be added for beginner level preference so that even if the users have less knowledge of it, they can just get the idea of the impact of the article)
+- ~~Quick self-assessment sliders (1–5) for comfort with math, code, and research papers to fine-tune output.~~
 - *Impact:* Vocabulary, summary tone, and context framing adapt to the selected level.
 
 #### 4. Frequency and Delivery Time
 **Step 4: Set Frequency and Delivery Time**
 - Users customize when and how often they receive their digest or alerts.
     - *Specific Day/Time:* e.g., "Every Monday at 9:00 AM EST" or "Friday afternoon digest."
-    - *Daily Digest (optional):* More frequent, shorter newsletter delivered every day.
-    - *Urgent Alerts Only (optional):* Immediate notifications for major breakthrough news, bypassing regular digests.
+    - ~~*Daily Digest (optional):* More frequent, shorter newsletter delivered every day.~~
+    - ~~*Urgent Alerts Only (optional):* Immediate notifications for major breakthrough news, bypassing regular digests.~~
 
-#### 5. Privacy Controls & Data Usage
-- Users can review and manage what data is used for personalization.
-    - *Options:* Opt-in/out of data collection, view/edit personalization profile, request data deletion.
+#### ~~5. Privacy Controls & Data Usage~~
+- ~~Users can review and manage what data is used for personalization.~~
+    - ~~*Options:* Opt-in/out of data collection, view/edit personalization profile, request data deletion.~~
 
 ---
 
